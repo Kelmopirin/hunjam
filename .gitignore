@@ -1,0 +1,110 @@
+# =========================
+# Unity generated files
+# =========================
+[Ll]ibrary/
+[Tt]emp/
+[Oo]bj/
+[Bb]uild/
+[Bb]uilds/
+[Ll]ogs/
+[Mm]emoryCaptures/
+
+# User-specific files
+*.csproj
+*.unityproj
+*.sln
+*.suo
+*.tmp
+*.user
+*.userprefs
+*.pidb
+*.booproj
+*.svd
+*.pdb
+*.mdb
+*.opendb
+*.VC.db
+
+# Rider / JetBrains IDE
+.idea/
+*.sln.iml
+
+# Visual Studio Code
+.vscode/
+
+# Unity Cache
+/[Uu]ser[Ss]ettings/
+# Uncomment if you want to ignore the asset store tools plugin
+# [Aa]ssets/AssetStoreTools*
+
+# Auto-generated meta files
+*.pidb.meta
+*.pdb.meta
+*.mdb.meta
+
+# Builds
+*.apk
+*.aab
+*.unitypackage
+*.app
+*.exe
+*.xcodeproj/
+*.xcworkspace/
+*.ipa
+
+# Crash Reports
+sysinfo.txt
+
+# ==========================================
+# OS generated files
+# ==========================================
+# macOS
+.DS_Store
+._*
+.Spotlight-V100
+.Trashes
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# ==========================================
+# Package Manager
+# ==========================================
+[Pp]ackages/com.unity.package-manager-do-not-modify/
+[Pp]ackages/packages-lock.json
+
+# ==========================================
+# Addressables / Generated Data
+# ==========================================
+[Aa]ssets/AddressableAssetsData/*
+!/[Aa]ssets/AddressableAssetsData/*.asset
+!/[Aa]ssets/AddressableAssetsData/*.json
+!/[Aa]ssets/AddressableAssetsData/*.yaml
+
+# ==========================================
+# Other Unity-generated folders
+# ==========================================
+/[Uu]serSettings/
+ProfileData/
+CrashReports/
+
+# ==========================================
+# Collaborate / Plastic SCM
+# ==========================================
+/[Uu]serSettings/CollabSettings.asset
+/PlasticSCM/
+
+# ==========================================
+# Local settings and caches
+# ==========================================
+/.local/
+*.local
+
+# ==========================================
+# Streaming Assets (optional)
+# ==========================================
+# Uncomment if you generate streaming assets at runtime
+# [Aa]ssets/[Ss]treamingAssets/
+
