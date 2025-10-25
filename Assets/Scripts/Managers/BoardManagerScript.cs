@@ -3,13 +3,24 @@ using TMPro;
 
 public class BoardManagerScript : MonoBehaviour
 {
-    public TMPro.TextMeshPro textMesh;
-    void setText(string str)
+    // Singleton instance
+    public static BoardManagerScript Instance { get; private set; }
+
+    public TMP_Text textMesh; // your TextMeshPro component
+
+    private void Awake()
     {
-        textMesh.text = str;
+        
+        Instance = this;
     }
+
+    public void setText(string str)
+    {
+        if (textMesh != null)
+            textMesh.text = str;
+    }
+
     void Start()
     {
-        setText("Placeholder");
     }
 }
