@@ -4816,6 +4816,7 @@ RectTransform:
   - {fileID: 50362350}
   - {fileID: 1510824603}
   - {fileID: 213816509}
+  - {fileID: 1357102921}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -24408,12 +24409,12 @@ MonoBehaviour:
   - {fileID: 2910102300378922748, guid: 372d04339301e6b469db9f7bde80de24, type: 3}
   - {fileID: 3817671880582911683, guid: 66845eac530d844418ff7f2fe96e15a7, type: 3}
   - {fileID: 7508664433515660591, guid: eb9f5e4adcd2d384bb69f62fbc714cf5, type: 3}
-  - {fileID: 8865930632327478014, guid: 28c549d1da0ed9f4cac10f02962d4879, type: 3}
+  - {fileID: 4236485280814453633, guid: 805f8959e26afd34eb84a592566fa811, type: 3}
   - {fileID: 736895841103052052, guid: 2f3a1e115d5c1d146b6e2d805e55b060, type: 3}
   - {fileID: 4482228299949539168, guid: 32a44096b8603704f9fdfa167f056741, type: 3}
-  - {fileID: 3983517688645238424, guid: 53ff779c9eff4e3438d0355531bba50f, type: 3}
-  - {fileID: 4595273103458447078, guid: 9f6d7764d2c389b449059e32cab0664d, type: 3}
-  - {fileID: 3021016534670666181, guid: 94366004eb6d7584dbf4b63d40952666, type: 3}
+  - {fileID: 4236485280814453633, guid: ce1767e8bffe0204187b00663a50c847, type: 3}
+  - {fileID: 4236485280814453633, guid: 5bb95d07153eb41488cf937d32efc981, type: 3}
+  - {fileID: 4236485280814453633, guid: 805f8959e26afd34eb84a592566fa811, type: 3}
   itemsToSpawn: 40
   randomSeed: -1
   zOffset: 0
@@ -34214,7 +34215,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 36504681c78ed264698fcc7889b66b76, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DayManager
-  currentDay: 1
 --- !u!1001 &1363972414
 PrefabInstance:
   m_ObjectHideFlags: 0
