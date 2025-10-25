@@ -12,6 +12,9 @@ public class PlayerController : MonoBehaviour
     private PlayerInput playerInput;
     private Rigidbody rb;
 
+    public ItemProgressBar progressBar; // assign in inspector
+
+
     public Image fadeImage; // assign in Inspector
     public float fadeDuration = 2f;
     private bool isFading = false;
@@ -129,13 +132,19 @@ public class PlayerController : MonoBehaviour
         {
             if (player.InventoryCount > 0)
             {
-                player.RemoveOneItem();
-                UpdateInventoryUI();
+                // string usedItem = player.GetCurrentItem();
 
-                // Play cauldron particle effect
-                Cauldron cauldron = currentTarget.GetComponent<Cauldron>();
-                if (cauldron != null)
-                    cauldron.Activate();
+            player.RemoveOneItem();
+            UpdateInventoryUI();
+
+            // CALL FUNCTION FROM ANOTHER SCRIPT
+            if (progressBar != null)
+                progressBar.FillForItem(usedItem);
+
+            // Play cauldron effect
+            Cauldron cauldron = currentTarget.GetComponent<Cauldron>();
+            if (cauldron != null)
+                cauldron.Activate();
             }
             else
             {
