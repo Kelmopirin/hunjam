@@ -64,6 +64,18 @@ public class Player
         return true;
     }
 
+    // Removes the item at a specific index
+    public bool RemoveItemAt(int index)
+    {
+        if (index >= 0 && index < inventory.Count)
+        {
+            inventory.RemoveAt(index);
+            return true;
+        }
+        return false;
+    }
+
+
     // Inputs
     public void SetMoveInput(Vector2 input) => moveInput = input;
     public void SetLookInput(Vector2 input) => lookInput = input;
@@ -130,4 +142,14 @@ public class Player
 
         return null;
     }
+
+    // Returns the Sprite of the currently selected item, or null if empty hand
+    public Sprite GetCurrentItem(int selectedIndex)
+    {
+        if (selectedIndex < 0 || selectedIndex >= inventory.Count)
+            return null; // Empty hand
+
+        return inventory[selectedIndex];
+    }
+
 }
