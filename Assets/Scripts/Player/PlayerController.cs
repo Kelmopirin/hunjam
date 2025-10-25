@@ -1,8 +1,16 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
+
+[System.Serializable]
+public struct HandHoldPair
+{
+    public Sprite itemSprite;      // Sprite from item pickup
+    public Texture2D handTexture;  // Hand texture showing item held
+}
 
 [RequireComponent(typeof(CharacterController))]
 public class PlayerController : MonoBehaviour
@@ -12,7 +20,8 @@ public class PlayerController : MonoBehaviour
     private PlayerInput playerInput;
     private Rigidbody rb;
 
-    public Image fadeImage; // assign in Inspector
+    [Header("Fade")]
+    public Image fadeImage;
     public float fadeDuration = 2f;
     private bool isFading = false;
 
@@ -23,14 +32,27 @@ public class PlayerController : MonoBehaviour
     public float interactDistance = 3f;
 
     [Header("UI")]
-    public Slider energySlider;          // Assign your energy bar
-    public RawImage[] inventorySlots;    // Assign your hotbar UI
-    public GameObject interactIcon;      // Assign interact icon
+    public Slider energySlider;
+    public RawImage[] inventorySlots;
+    public GameObject interactIcon;
 
-    private AudioSource collapseAudio;  // assign in Inspector
+    [Header("Hotbar UI")]
+    public Image[] slotHighlights; // Assign one highlight per slot in Inspector
+
+
+    [Header("Hand UI")]
+    public RawImage handImage;
+    public Texture2D emptyHandTexture;
+    public List<HandHoldPair> handPairs = new List<HandHoldPair>();
+
+    [Header("Audio")]
+    public AudioSource collapseAudio;
 
     [Header("References")]
     public Transform playerCamera;
+
+    [Header("Hotbar / Selection")]
+    private int selectedIndex = 0; // Selected inventory index
 
     private GameObject currentTarget;
 
@@ -38,7 +60,9 @@ public class PlayerController : MonoBehaviour
     {
         characterController = GetComponent<CharacterController>();
         playerInput = GetComponent<PlayerInput>();
-        collapseAudio = GetComponent<AudioSource>();
+
+        if (collapseAudio == null)
+            collapseAudio = GetComponent<AudioSource>();
 
         player = new Player(speed, gravity, mouseSensitivity);
 
@@ -51,7 +75,6 @@ public class PlayerController : MonoBehaviour
             energySlider.maxValue = player.MaxEnergy;
             energySlider.value = player.CurrentEnergy;
         }
-
     }
 
     private void OnEnable()
@@ -78,61 +101,69 @@ public class PlayerController : MonoBehaviour
 
     private void Update()
     {
-        // Player collapse check
+        // Collapse check
         if (player.IsCollapsed && rb == null)
             CollapsePlayer();
 
-        // Call Player movement/look
+        // Movement + Look
         player.Move(transform, characterController, Time.deltaTime);
         player.Look(transform, playerCamera);
 
-        // Update energy slider
+        // Update Energy UI
         if (energySlider != null)
             energySlider.value = player.CurrentEnergy;
 
-        // Check interactables
+        // Interact Check
         currentTarget = player.CheckForInteractable(playerCamera, interactDistance);
         if (interactIcon != null)
             interactIcon.SetActive(currentTarget != null);
 
-        // Fade and reload if collapsed
+        // Collapse effect start
         if (player.IsCollapsed && !isFading)
         {
-            // Play collapse audio once
             if (collapseAudio != null && !collapseAudio.isPlaying)
                 collapseAudio.Play();
-
             StartCoroutine(FadeAndReload());
+        }
+
+        // Hotbar scroll (only if player alive)
+        if (!player.IsCollapsed)
+        {
+            HandleHotbarScroll();
         }
     }
 
-
-
     private void OnMove(InputAction.CallbackContext context)
     {
-        Vector2 input = context.ReadValue<Vector2>();
-        player.SetMoveInput(input);
+        player.SetMoveInput(context.ReadValue<Vector2>());
     }
 
     private void OnLook(InputAction.CallbackContext context)
     {
-        Vector2 input = context.ReadValue<Vector2>();
-        player.SetLookInput(input);
+        player.SetLookInput(context.ReadValue<Vector2>());
     }
 
     private void OnInteract(InputAction.CallbackContext context)
     {
         if (currentTarget == null) return;
 
-        // Check if current target is cauldron
         if (currentTarget.CompareTag("Cauldron"))
         {
-            if (player.InventoryCount > 0)
+            if (player.InventoryCount > 0 && selectedIndex < player.InventoryCount)
             {
-                player.RemoveOneItem();
-                UpdateInventoryUI();
+                // Remove selected item
+                player.RemoveItemAt(selectedIndex);
 
-                // Play cauldron particle effect
+                // Adjust selected index if now out of range
+                if (selectedIndex >= player.InventoryCount)
+                    selectedIndex = Mathf.Max(player.InventoryCount - 1, 0);
+
+                // Update UI after selection adjustment
+                UpdateInventoryUI();
+                UpdateHandTexture();
+                UpdateHotbarHighlight();
+
+                // Play particle effect
                 Cauldron cauldron = currentTarget.GetComponent<Cauldron>();
                 if (cauldron != null)
                     cauldron.Activate();
@@ -142,14 +173,25 @@ public class PlayerController : MonoBehaviour
                 Debug.Log("No items to use!");
             }
         }
-        else // Normal pickup
+        else // Pickup
         {
             if (player.TryPickupItem(currentTarget))
+            {
+                // Select newly picked item
+                selectedIndex = player.InventoryCount - 1;
+
+                // Update UI
                 UpdateInventoryUI();
+                UpdateHandTexture();
+                UpdateHotbarHighlight();
+            }
             else
+            {
                 Debug.Log("Inventory full!");
+            }
         }
     }
+
 
     private void UpdateInventoryUI()
     {
@@ -159,44 +201,97 @@ public class PlayerController : MonoBehaviour
         {
             if (i < items.Count)
             {
-                inventorySlots[i].texture = items[i].texture; // Convert Sprite → Texture
+                inventorySlots[i].texture = items[i].texture;
                 inventorySlots[i].color = Color.white;
             }
             else
             {
                 inventorySlots[i].texture = null;
-                inventorySlots[i].color = new Color(1, 1, 1, 0); // transparent
+                inventorySlots[i].color = new Color(1, 1, 1, 0);
+            }
+        }
+
+        UpdateHandTexture();
+        UpdateHotbarHighlight(); // ✅ Highlight update whenever inventory changes
+    }
+
+
+    private void UpdateHotbarHighlight()
+    {
+        // Clamp selectedIndex to the number of slots
+        selectedIndex = Mathf.Clamp(selectedIndex, 0, inventorySlots.Length - 1);
+
+        for (int i = 0; i < inventorySlots.Length; i++)
+        {
+            if (i >= player.InventoryCount)
+            {
+                // Empty slot
+                inventorySlots[i].color = (i == selectedIndex) ? Color.white : new Color(1f, 1f, 1f, 0.0f);
+            }
+            else
+            {
+                // Inventory slot
+                inventorySlots[i].color = (i == selectedIndex) ? Color.white : new Color(1f, 1f, 1f, 0.1f);
             }
         }
     }
 
+
+    private void UpdateHandTexture()
+    {
+        if (selectedIndex >= player.InventoryCount)
+        {
+            // Empty hand
+            handImage.texture = emptyHandTexture;
+            return;
+        }
+
+        // Show held item
+        Sprite selectedItem = player.Items[selectedIndex];
+        foreach (var pair in handPairs)
+        {
+            if (pair.itemSprite == selectedItem)
+            {
+                handImage.texture = pair.handTexture;
+                return;
+            }
+        }
+
+        handImage.texture = emptyHandTexture; // fallback
+    }
+
+
+    private void HandleHotbarScroll()
+    {
+        float scroll = Mouse.current.scroll.ReadValue().y;
+
+        if (scroll > 0f) // Scroll up
+            selectedIndex = (selectedIndex - 1 + inventorySlots.Length) % inventorySlots.Length;
+        else if (scroll < 0f) // Scroll down
+            selectedIndex = (selectedIndex + 1) % inventorySlots.Length;
+
+        UpdateHandTexture();
+        UpdateHotbarHighlight();
+    }
+
+
+
     private void CollapsePlayer()
     {
-        if (rb != null) return; // already collapsed
-
-        // Disable CharacterController
         characterController.enabled = false;
 
-        // Enable collider for physics
         Collider col = GetComponent<Collider>();
-        if (col != null)
-            col.enabled = true;
+        if (col != null) col.enabled = true;
 
-        // Add Rigidbody for physics
         rb = gameObject.AddComponent<Rigidbody>();
         rb.mass = 70f;
-
-        // Optional: freeze rotations you don’t want
-        rb.constraints = RigidbodyConstraints.None; // full ragdoll rotation
-
-        // Optional: add small forward force
+        rb.constraints = RigidbodyConstraints.None;
         rb.AddForce(transform.forward * 1f, ForceMode.VelocityChange);
     }
 
     private IEnumerator FadeAndReload()
     {
         isFading = true;
-
         float elapsed = 0f;
         Color c = fadeImage.color;
 
@@ -208,12 +303,8 @@ public class PlayerController : MonoBehaviour
             yield return null;
         }
 
-        // Ensure alpha = 1
         c.a = 1f;
         fadeImage.color = c;
-
-        // Reload current scene
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
-
 }

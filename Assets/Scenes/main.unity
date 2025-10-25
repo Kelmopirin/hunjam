@@ -12203,7 +12203,7 @@ MonoBehaviour:
     m_ActionId: dbb76564-3428-4f2f-9811-4da9651c25d3
     m_ActionName: 'Player/Interact[/Mouse/leftButton]'
   m_NeverAutoSwitchControlSchemes: 0
-  m_DefaultControlScheme: 
+  m_DefaultControlScheme: Keyboard&Mouse
   m_DefaultActionMap: Player
   m_SplitScreenIndex: -1
   m_Camera: {fileID: 0}
@@ -12328,6 +12328,30 @@ MonoBehaviour:
   - {fileID: 1417222176}
   - {fileID: 627620704}
   interactIcon: {fileID: 259688788}
+  handImage: {fileID: 1843859498}
+  emptyHandTexture: {fileID: 2800000, guid: 4a1d182ed6305584fb15338a49c17511, type: 3}
+  handPairs:
+  - itemSprite: {fileID: 21300000, guid: 89aa086c6fde61d4dbc4d6b1b1d1d498, type: 3}
+    handTexture: {fileID: 2800000, guid: 032ef025848447540b653086f874767c, type: 3}
+  - itemSprite: {fileID: 21300000, guid: 5131dd499a1ee8d49a2c7558624fb235, type: 3}
+    handTexture: {fileID: 2800000, guid: fd59d8325c6a49d4c852a24fddd490bd, type: 3}
+  - itemSprite: {fileID: 21300000, guid: b6b21e4cbcde5824584d21f2b4e7102a, type: 3}
+    handTexture: {fileID: 2800000, guid: 1e9136e47a2220f42950fe2b8268eb0f, type: 3}
+  - itemSprite: {fileID: 21300000, guid: 198757027273758418f542c7db9027fb, type: 3}
+    handTexture: {fileID: 2800000, guid: cf0cd5e3544a63e4c8d8731ab338e9f6, type: 3}
+  - itemSprite: {fileID: 21300000, guid: d855e6456ec25c441af34f2f5d85247a, type: 3}
+    handTexture: {fileID: 2800000, guid: 7aa70307bb2e1e047b11d8814dfd15b6, type: 3}
+  - itemSprite: {fileID: 21300000, guid: 5756c37c6c5db8b49be16662fed28529, type: 3}
+    handTexture: {fileID: 2800000, guid: 496fa311ba46d0948a89e1f77bc945a5, type: 3}
+  - itemSprite: {fileID: 21300000, guid: 7624f2427b0c226499a7f3417ae3ba4d, type: 3}
+    handTexture: {fileID: 2800000, guid: 496fa311ba46d0948a89e1f77bc945a5, type: 3}
+  - itemSprite: {fileID: 21300000, guid: a10ad63c6ac065446b9b341ebbaf2d88, type: 3}
+    handTexture: {fileID: 2800000, guid: c5e941fdef983e141b4943371de4410e, type: 3}
+  - itemSprite: {fileID: 21300000, guid: a5e47399be4a93b4ca461a48bce8961c, type: 3}
+    handTexture: {fileID: 2800000, guid: fb447c88d5283d94c8acd269cb8d335b, type: 3}
+  - itemSprite: {fileID: 21300000, guid: 702bd3e2784301a4b89dbc9028b33e11, type: 3}
+    handTexture: {fileID: 2800000, guid: 382aba58c27e87148b7c95452a762343, type: 3}
+  collapseAudio: {fileID: 0}
   playerCamera: {fileID: 1476135393}
 --- !u!136 &472432619
 CapsuleCollider:
