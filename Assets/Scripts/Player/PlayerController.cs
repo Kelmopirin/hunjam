@@ -1,6 +1,8 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
 
 [RequireComponent(typeof(CharacterController))]
 public class PlayerController : MonoBehaviour
@@ -8,6 +10,11 @@ public class PlayerController : MonoBehaviour
     private Player player;
     private CharacterController characterController;
     private PlayerInput playerInput;
+    private Rigidbody rb;
+
+    public Image fadeImage; // assign in Inspector
+    public float fadeDuration = 2f;
+    private bool isFading = false;
 
     [Header("Settings")]
     public float speed = 5f;
@@ -15,22 +22,36 @@ public class PlayerController : MonoBehaviour
     public float mouseSensitivity = 100f;
     public float interactDistance = 3f;
 
+    [Header("UI")]
+    public Slider energySlider;          // Assign your energy bar
+    public RawImage[] inventorySlots;    // Assign your hotbar UI
+    public GameObject interactIcon;      // Assign interact icon
+
+    private AudioSource collapseAudio;  // assign in Inspector
+
     [Header("References")]
     public Transform playerCamera;
-    public GameObject interactIcon;
-    public RawImage[] inventorySlots;
-    private GameObject currentTarget;
 
+    private GameObject currentTarget;
 
     private void Awake()
     {
         characterController = GetComponent<CharacterController>();
         playerInput = GetComponent<PlayerInput>();
+        collapseAudio = GetComponent<AudioSource>();
 
         player = new Player(speed, gravity, mouseSensitivity);
 
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
+
+        if (energySlider != null)
+        {
+            energySlider.minValue = 0f;
+            energySlider.maxValue = player.MaxEnergy;
+            energySlider.value = player.CurrentEnergy;
+        }
+
     }
 
     private void OnEnable()
@@ -55,6 +76,81 @@ public class PlayerController : MonoBehaviour
         playerInput.actions["Interact"].performed -= OnInteract;
     }
 
+    private void Update()
+    {
+        // Player collapse check
+        if (player.IsCollapsed && rb == null)
+            CollapsePlayer();
+
+        // Call Player movement/look
+        player.Move(transform, characterController, Time.deltaTime);
+        player.Look(transform, playerCamera);
+
+        // Update energy slider
+        if (energySlider != null)
+            energySlider.value = player.CurrentEnergy;
+
+        // Check interactables
+        currentTarget = player.CheckForInteractable(playerCamera, interactDistance);
+        if (interactIcon != null)
+            interactIcon.SetActive(currentTarget != null);
+
+        // Fade and reload if collapsed
+        if (player.IsCollapsed && !isFading)
+        {
+            // Play collapse audio once
+            if (collapseAudio != null && !collapseAudio.isPlaying)
+                collapseAudio.Play();
+
+            StartCoroutine(FadeAndReload());
+        }
+    }
+
+
+
+    private void OnMove(InputAction.CallbackContext context)
+    {
+        Vector2 input = context.ReadValue<Vector2>();
+        player.SetMoveInput(input);
+    }
+
+    private void OnLook(InputAction.CallbackContext context)
+    {
+        Vector2 input = context.ReadValue<Vector2>();
+        player.SetLookInput(input);
+    }
+
+    private void OnInteract(InputAction.CallbackContext context)
+    {
+        if (currentTarget == null) return;
+
+        // Check if current target is cauldron
+        if (currentTarget.CompareTag("Cauldron"))
+        {
+            if (player.InventoryCount > 0)
+            {
+                player.RemoveOneItem();
+                UpdateInventoryUI();
+
+                // Play cauldron particle effect
+                Cauldron cauldron = currentTarget.GetComponent<Cauldron>();
+                if (cauldron != null)
+                    cauldron.Activate();
+            }
+            else
+            {
+                Debug.Log("No items to use!");
+            }
+        }
+        else // Normal pickup
+        {
+            if (player.TryPickupItem(currentTarget))
+                UpdateInventoryUI();
+            else
+                Debug.Log("Inventory full!");
+        }
+    }
+
     private void UpdateInventoryUI()
     {
         var items = player.Items;
@@ -69,71 +165,55 @@ public class PlayerController : MonoBehaviour
             else
             {
                 inventorySlots[i].texture = null;
-                inventorySlots[i].color = new Color(1,1,1,0); // transparent
+                inventorySlots[i].color = new Color(1, 1, 1, 0); // transparent
             }
         }
     }
 
-    private void OnInteract(InputAction.CallbackContext context)
+    private void CollapsePlayer()
     {
-        if (currentTarget == null) return;
+        if (rb != null) return; // already collapsed
 
-        // Check if current target is cauldron
-        if (currentTarget.CompareTag("Cauldron"))
+        // Disable CharacterController
+        characterController.enabled = false;
+
+        // Enable collider for physics
+        Collider col = GetComponent<Collider>();
+        if (col != null)
+            col.enabled = true;
+
+        // Add Rigidbody for physics
+        rb = gameObject.AddComponent<Rigidbody>();
+        rb.mass = 70f;
+
+        // Optional: freeze rotations you don’t want
+        rb.constraints = RigidbodyConstraints.None; // full ragdoll rotation
+
+        // Optional: add small forward force
+        rb.AddForce(transform.forward * 1f, ForceMode.VelocityChange);
+    }
+
+    private IEnumerator FadeAndReload()
+    {
+        isFading = true;
+
+        float elapsed = 0f;
+        Color c = fadeImage.color;
+
+        while (elapsed < fadeDuration)
         {
-            // Only activate if player has at least 1 item
-            if (player.InventoryCount > 0) // We'll add InventoryCount to Player
-            {
-                player.RemoveOneItem();
-                UpdateInventoryUI();
-
-                // Play particle effect
-                Cauldron cauldron = currentTarget.GetComponent<Cauldron>();
-                if (cauldron != null)
-                    cauldron.Activate();
-            }
-            else
-            {
-                Debug.Log("No items to use!");
-            }
+            elapsed += Time.deltaTime;
+            c.a = Mathf.Lerp(0f, 1f, elapsed / fadeDuration);
+            fadeImage.color = c;
+            yield return null;
         }
-        else // Normal pickup
-        {
-            if (player.TryPickupItem(currentTarget))
-            {
-                UpdateInventoryUI();
-            }
-            else
-            {
-                Debug.Log("Inventory full!");
-            }
-        }
+
+        // Ensure alpha = 1
+        c.a = 1f;
+        fadeImage.color = c;
+
+        // Reload current scene
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 
-
-
-
-    private void Update()
-    {
-        player.Move(transform, characterController);
-        player.Look(transform, playerCamera);
-
-        currentTarget = player.CheckForInteractable(playerCamera, interactDistance);
-
-        if (interactIcon != null)
-            interactIcon.SetActive(currentTarget != null);
-    }
-
-
-    private void OnMove(InputAction.CallbackContext context)
-    {
-        Vector2 input = context.ReadValue<Vector2>();
-        player.SetMoveInput(input);
-    }
-
-    private void OnLook(InputAction.CallbackContext context)
-    {
-        Vector2 input = context.ReadValue<Vector2>();
-        player.SetLookInput(input);
-    }
 }

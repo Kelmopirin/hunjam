@@ -2,7 +2,11 @@ using UnityEngine;
 
 public class SpriteRotator : MonoBehaviour
 {
-    public Transform playerCamera;
+    private Transform playerCamera;
+
+    void Start() {
+        playerCamera = Camera.main.transform;
+    }
 
     void LateUpdate()
     {

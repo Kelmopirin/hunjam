@@ -13,11 +13,23 @@ public class Player
 
     private float xRotation = 0f;
 
+    // Inventory
     private List<Sprite> inventory = new List<Sprite>();
     public IReadOnlyList<Sprite> Items => inventory;
     private const int MaxInventorySize = 3;
-
     public int InventoryCount => inventory.Count;
+
+    // Energy
+    private float maxEnergy = 500f;
+    private float currentEnergy;
+    private float moveDrainRate = 10f; // per second
+    private bool isCollapsed = false;
+    public bool IsCollapsed => isCollapsed;
+    public Vector2 MoveInput => moveInput;
+    // Add these properties if not already
+    public float CurrentEnergy => currentEnergy;
+    public float MaxEnergy => maxEnergy;
+
 
     public Player(float speed, float gravity, float mouseSensitivity = 100f)
     {
@@ -25,8 +37,11 @@ public class Player
         this.gravity = gravity;
         this.mouseSensitivity = mouseSensitivity;
         velocity = Vector3.zero;
+
+        currentEnergy = maxEnergy;
     }
 
+    // Inventory Methods
     public bool TryPickupItem(GameObject item)
     {
         if (inventory.Count >= MaxInventorySize)
@@ -36,12 +51,8 @@ public class Player
         if (sr == null || sr.sprite == null)
             return false;
 
-        // Store sprite
         inventory.Add(sr.sprite);
-
-        // Hide item in world
         item.SetActive(false);
-
         return true;
     }
 
@@ -49,40 +60,39 @@ public class Player
     {
         if (inventory.Count == 0)
             return false;
-
-        // Remove last item (like Minecraft hotbar behavior)
         inventory.RemoveAt(inventory.Count - 1);
         return true;
     }
 
-    public void SetMoveInput(Vector2 input)
-    {
-        moveInput = input;
-    }
-
-    public void SetLookInput(Vector2 input)
-    {
-        lookInput = input;
-    }
+    // Inputs
+    public void SetMoveInput(Vector2 input) => moveInput = input;
+    public void SetLookInput(Vector2 input) => lookInput = input;
 
     // Movement
-    public void Move(Transform transform, CharacterController controller)
+    public void Move(Transform transform, CharacterController controller, float deltaTime)
     {
+        if (isCollapsed) return;
+
         Vector3 move = transform.right * moveInput.x + transform.forward * moveInput.y;
         move *= speed;
 
-        velocity.y += gravity * Time.deltaTime;
+        // Drain energy if moving
+        if (moveInput.magnitude > 0.1f)
+            DrainEnergy(moveDrainRate * deltaTime);
 
-        Vector3 displacement = (move + velocity) * Time.deltaTime;
+        velocity.y += gravity * deltaTime;
+        Vector3 displacement = (move + velocity) * deltaTime;
         controller.Move(displacement);
 
         if (controller.isGrounded && velocity.y < 0)
             velocity.y = -2f;
     }
 
-    // Camera / player rotation
+    // Looking
     public void Look(Transform playerBody, Transform cameraTransform)
     {
+        if (isCollapsed) return;
+
         float mouseX = lookInput.x * mouseSensitivity * Time.deltaTime;
         float mouseY = lookInput.y * mouseSensitivity * Time.deltaTime;
 
@@ -93,6 +103,20 @@ public class Player
         playerBody.Rotate(Vector3.up * mouseX);
     }
 
+    // Energy Methods
+    private void DrainEnergy(float amount)
+    {
+        currentEnergy -= amount;
+        if (currentEnergy <= 0f)
+        {
+            currentEnergy = 0f;
+            Collapse();
+        }
+    }
+
+    private void Collapse() => isCollapsed = true;
+
+    // Interactable check
     public GameObject CheckForInteractable(Transform cameraTransform, float distance)
     {
         Ray ray = new Ray(cameraTransform.position, cameraTransform.forward);
@@ -101,12 +125,9 @@ public class Player
         if (Physics.Raycast(ray, out hit, distance))
         {
             if (hit.collider.CompareTag("Interactable") || hit.collider.CompareTag("Cauldron"))
-            {
                 return hit.collider.gameObject;
-            }
         }
 
         return null;
     }
-
 }
