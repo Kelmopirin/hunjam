@@ -8,8 +8,8 @@ using UnityEngine.SceneManagement;
 [System.Serializable]
 public struct HandHoldPair
 {
-    public Sprite itemSprite;      // Sprite from item pickup
-    public Texture2D handTexture;  // Hand texture showing item held
+    public Sprite itemSprite;
+    public Texture2D handTexture;
 }
 
 [RequireComponent(typeof(CharacterController))]
@@ -35,10 +35,10 @@ public class PlayerController : MonoBehaviour
     public Slider energySlider;
     public RawImage[] inventorySlots;
     public GameObject interactIcon;
+    public GameObject useIcon; // ✅ This is now controlled automatically
 
     [Header("Hotbar UI")]
-    public Image[] slotHighlights; // Assign one highlight per slot in Inspector
-
+    public Image[] slotHighlights;
 
     [Header("Hand UI")]
     public RawImage handImage;
@@ -52,9 +52,8 @@ public class PlayerController : MonoBehaviour
     public Transform playerCamera;
 
     [Header("Hotbar / Selection")]
-    private int selectedIndex = 0; // Selected inventory index
-    public ItemProgressBar progressBar; // drag from scene or assign dynamically
-
+    private int selectedIndex = 0;
+    public ItemProgressBar progressBar;
 
     private GameObject currentTarget;
 
@@ -88,6 +87,7 @@ public class PlayerController : MonoBehaviour
         playerInput.actions["Look"].canceled += OnLook;
 
         playerInput.actions["Interact"].performed += OnInteract;
+        playerInput.actions["Use"].performed += OnUse;
     }
 
     private void OnDisable()
@@ -99,28 +99,27 @@ public class PlayerController : MonoBehaviour
         playerInput.actions["Look"].canceled -= OnLook;
 
         playerInput.actions["Interact"].performed -= OnInteract;
+        playerInput.actions["Use"].performed -= OnUse;
     }
 
     private void Update()
     {
-        // Collapse check
         if (player.IsCollapsed && rb == null)
             CollapsePlayer();
 
-        // Movement + Look
         player.Move(transform, characterController, Time.deltaTime);
         player.Look(transform, playerCamera);
 
-        // Update Energy UI
         if (energySlider != null)
             energySlider.value = player.CurrentEnergy;
 
-        // Interact Check
         currentTarget = player.CheckForInteractable(playerCamera, interactDistance);
         if (interactIcon != null)
             interactIcon.SetActive(currentTarget != null);
 
-        // Collapse effect start
+        // ✅ Keep Use Icon updated
+        UpdateUseIcon();
+
         if (player.IsCollapsed && !isFading)
         {
             if (collapseAudio != null && !collapseAudio.isPlaying)
@@ -128,81 +127,82 @@ public class PlayerController : MonoBehaviour
             StartCoroutine(FadeAndReload());
         }
 
-        // Hotbar scroll (only if player alive)
         if (!player.IsCollapsed)
         {
             HandleHotbarScroll();
         }
     }
 
-    private void OnMove(InputAction.CallbackContext context)
-    {
-        player.SetMoveInput(context.ReadValue<Vector2>());
-    }
+    private void OnMove(InputAction.CallbackContext context) => player.SetMoveInput(context.ReadValue<Vector2>());
+    private void OnLook(InputAction.CallbackContext context) => player.SetLookInput(context.ReadValue<Vector2>());
 
-    private void OnLook(InputAction.CallbackContext context)
+    private void OnInteract(InputAction.CallbackContext context)
     {
-        player.SetLookInput(context.ReadValue<Vector2>());
-    }
+        if (currentTarget == null) return;
 
-private void OnInteract(InputAction.CallbackContext context)
-    {
-    
-    if (currentTarget == null) return;
-
-    if (currentTarget.CompareTag("Cauldron"))
-    {
-        if (player.InventoryCount > 0 && selectedIndex < player.InventoryCount)
+        // ✅ Bed interaction
+        if (currentTarget.CompareTag("Bed"))
         {
-            // Store item name before removing
-            Sprite usedSprite = player.GetCurrentItem(selectedIndex);
-            // Remove selected item
+            BedInteract bed = currentTarget.GetComponent<BedInteract>();
+            if (bed != null)
+                bed.TrySleep();
+            return;
+        }
+
+
+        if (currentTarget.CompareTag("Cauldron"))
+        {
+            if (player.InventoryCount > 0 && selectedIndex < player.InventoryCount)
+            {
+                Sprite usedSprite = player.GetCurrentItem(selectedIndex);
+                player.RemoveItemAt(selectedIndex);
+
+                if (selectedIndex >= player.InventoryCount)
+                    selectedIndex = Mathf.Max(player.InventoryCount - 1, 0);
+
+                UpdateInventoryUI();
+
+                if (progressBar != null && usedSprite != null)
+                    progressBar.FillForItem(usedSprite.name);
+
+                Cauldron cauldron = currentTarget.GetComponent<Cauldron>();
+                if (cauldron != null)
+                    cauldron.Activate();
+            }
+        }
+        else
+        {
+            if (player.TryPickupItem(currentTarget))
+            {
+                selectedIndex = player.InventoryCount - 1;
+                UpdateInventoryUI();
+            }
+        }
+
+        UpdateUseIcon(); // ✅
+    }
+
+    private void OnUse(InputAction.CallbackContext context)
+    {
+        if (selectedIndex < 0 || selectedIndex >= player.InventoryCount) return;
+
+        Sprite currentItem = player.GetCurrentItem(selectedIndex);
+        if (currentItem == null) return;
+
+        // ✅ Only usable item check
+        if (currentItem.name.ToLower().Contains("hell"))
+        {
+            player.RestoreEnergy(150f);
             player.RemoveItemAt(selectedIndex);
 
-            // Adjust selected index if now out of range
             if (selectedIndex >= player.InventoryCount)
                 selectedIndex = Mathf.Max(player.InventoryCount - 1, 0);
 
-            // Update UI
             UpdateInventoryUI();
-            UpdateHandTexture();
-            UpdateHotbarHighlight();
-
-            // ✅ Call function in another script
-            if (progressBar != null && usedSprite != null)
-                progressBar.FillForItem(usedSprite.name);
-
-            // Play particle effect
-            Cauldron cauldron = currentTarget.GetComponent<Cauldron>();
-            if (cauldron != null)
-                cauldron.Activate();
         }
-        else
-        {
-            Debug.Log("No items to use!");
-        }
+
+        UpdateUseIcon(); // ✅
     }
-    else // Pickup
-    {
-        if (player.TryPickupItem(currentTarget))
-        {
-            selectedIndex = player.InventoryCount - 1;
-
-            UpdateInventoryUI();
-            UpdateHandTexture();
-            UpdateHotbarHighlight();
-
-            // ✅ Optionally call on pickup
-            
-        }
-        else
-        {
-            Debug.Log("Inventory full!");
-        }
-    }
-}
-
-
 
     private void UpdateInventoryUI()
     {
@@ -223,41 +223,31 @@ private void OnInteract(InputAction.CallbackContext context)
         }
 
         UpdateHandTexture();
-        UpdateHotbarHighlight(); // ✅ Highlight update whenever inventory changes
+        UpdateHotbarHighlight();
+        UpdateUseIcon(); // ✅
     }
-
 
     private void UpdateHotbarHighlight()
     {
-        // Clamp selectedIndex to the number of slots
         selectedIndex = Mathf.Clamp(selectedIndex, 0, inventorySlots.Length - 1);
 
         for (int i = 0; i < inventorySlots.Length; i++)
         {
             if (i >= player.InventoryCount)
-            {
-                // Empty slot
                 inventorySlots[i].color = (i == selectedIndex) ? Color.white : new Color(1f, 1f, 1f, 0.0f);
-            }
             else
-            {
-                // Inventory slot
                 inventorySlots[i].color = (i == selectedIndex) ? Color.white : new Color(1f, 1f, 1f, 0.1f);
-            }
         }
     }
-
 
     private void UpdateHandTexture()
     {
         if (selectedIndex >= player.InventoryCount)
         {
-            // Empty hand
             handImage.texture = emptyHandTexture;
             return;
         }
 
-        // Show held item
         Sprite selectedItem = player.Items[selectedIndex];
         foreach (var pair in handPairs)
         {
@@ -268,24 +258,44 @@ private void OnInteract(InputAction.CallbackContext context)
             }
         }
 
-        handImage.texture = emptyHandTexture; // fallback
+        handImage.texture = emptyHandTexture;
     }
-
 
     private void HandleHotbarScroll()
     {
         float scroll = Mouse.current.scroll.ReadValue().y;
 
-        if (scroll > 0f) // Scroll up
+        if (scroll > 0f)
             selectedIndex = (selectedIndex - 1 + inventorySlots.Length) % inventorySlots.Length;
-        else if (scroll < 0f) // Scroll down
+        else if (scroll < 0f)
             selectedIndex = (selectedIndex + 1) % inventorySlots.Length;
 
         UpdateHandTexture();
         UpdateHotbarHighlight();
+        UpdateUseIcon(); // ✅
     }
 
+    // ✅ NEW FUNCTION — controls when useIcon shows
+    private void UpdateUseIcon()
+    {
+        if (useIcon == null) return;
 
+        if (selectedIndex < 0 || selectedIndex >= player.InventoryCount)
+        {
+            useIcon.SetActive(false);
+            return;
+        }
+
+        Sprite currentItem = player.GetCurrentItem(selectedIndex);
+        if (currentItem == null)
+        {
+            useIcon.SetActive(false);
+            return;
+        }
+
+        bool isEnergyDrink = currentItem.name.ToLower().Contains("hell");
+        useIcon.SetActive(isEnergyDrink);
+    }
 
     private void CollapsePlayer()
     {

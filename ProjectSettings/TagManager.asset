@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Interactable
   - Cauldron
+  - Bed
   layers:
   - Default
   - TransparentFX
