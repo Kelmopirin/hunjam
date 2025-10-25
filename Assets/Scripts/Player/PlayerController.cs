@@ -140,6 +140,16 @@ public class PlayerController : MonoBehaviour
     {
         if (currentTarget == null) return;
 
+        // ✅ Bed interaction
+        if (currentTarget.CompareTag("Bed"))
+        {
+            BedInteract bed = currentTarget.GetComponent<BedInteract>();
+            if (bed != null)
+                bed.TrySleep();
+            return;
+        }
+
+
         if (currentTarget.CompareTag("Cauldron"))
         {
             if (player.InventoryCount > 0 && selectedIndex < player.InventoryCount)

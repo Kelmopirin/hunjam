@@ -134,7 +134,7 @@ public class Player
 
     private void Collapse() => isCollapsed = true;
 
-    // Interactable check
+
     public GameObject CheckForInteractable(Transform cameraTransform, float distance)
     {
         Ray ray = new Ray(cameraTransform.position, cameraTransform.forward);
@@ -142,12 +142,16 @@ public class Player
 
         if (Physics.Raycast(ray, out hit, distance))
         {
-            if (hit.collider.CompareTag("Interactable") || hit.collider.CompareTag("Cauldron"))
+            if (hit.collider.CompareTag("Interactable") ||
+                hit.collider.CompareTag("Cauldron") ||
+                hit.collider.CompareTag("Bed"))
+            {
                 return hit.collider.gameObject;
+            }
         }
-
         return null;
     }
+
 
     // Returns the Sprite of the currently selected item, or null if empty hand
     public Sprite GetCurrentItem(int selectedIndex)
