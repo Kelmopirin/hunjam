@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections.Generic;
 
 public class Player
 {
@@ -12,12 +13,46 @@ public class Player
 
     private float xRotation = 0f;
 
+    private List<Sprite> inventory = new List<Sprite>();
+    public IReadOnlyList<Sprite> Items => inventory;
+    private const int MaxInventorySize = 3;
+
+    public int InventoryCount => inventory.Count;
+
     public Player(float speed, float gravity, float mouseSensitivity = 100f)
     {
         this.speed = speed;
         this.gravity = gravity;
         this.mouseSensitivity = mouseSensitivity;
         velocity = Vector3.zero;
+    }
+
+    public bool TryPickupItem(GameObject item)
+    {
+        if (inventory.Count >= MaxInventorySize)
+            return false;
+
+        SpriteRenderer sr = item.GetComponent<SpriteRenderer>();
+        if (sr == null || sr.sprite == null)
+            return false;
+
+        // Store sprite
+        inventory.Add(sr.sprite);
+
+        // Hide item in world
+        item.SetActive(false);
+
+        return true;
+    }
+
+    public bool RemoveOneItem()
+    {
+        if (inventory.Count == 0)
+            return false;
+
+        // Remove last item (like Minecraft hotbar behavior)
+        inventory.RemoveAt(inventory.Count - 1);
+        return true;
     }
 
     public void SetMoveInput(Vector2 input)
@@ -57,4 +92,21 @@ public class Player
         cameraTransform.localRotation = Quaternion.Euler(xRotation, 0f, 0f);
         playerBody.Rotate(Vector3.up * mouseX);
     }
+
+    public GameObject CheckForInteractable(Transform cameraTransform, float distance)
+    {
+        Ray ray = new Ray(cameraTransform.position, cameraTransform.forward);
+        RaycastHit hit;
+
+        if (Physics.Raycast(ray, out hit, distance))
+        {
+            if (hit.collider.CompareTag("Interactable") || hit.collider.CompareTag("Cauldron"))
+            {
+                return hit.collider.gameObject;
+            }
+        }
+
+        return null;
+    }
+
 }
