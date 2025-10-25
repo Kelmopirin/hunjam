@@ -53,6 +53,8 @@ public class PlayerController : MonoBehaviour
 
     [Header("Hotbar / Selection")]
     private int selectedIndex = 0; // Selected inventory index
+    public ItemProgressBar progressBar; // drag from scene or assign dynamically
+
 
     private GameObject currentTarget;
 
@@ -143,54 +145,64 @@ public class PlayerController : MonoBehaviour
         player.SetLookInput(context.ReadValue<Vector2>());
     }
 
-    private void OnInteract(InputAction.CallbackContext context)
+private void OnInteract(InputAction.CallbackContext context)
+{
+    if (currentTarget == null) return;
+
+    if (currentTarget.CompareTag("Cauldron"))
     {
-        if (currentTarget == null) return;
-
-        if (currentTarget.CompareTag("Cauldron"))
+        if (player.InventoryCount > 0 && selectedIndex < player.InventoryCount)
         {
-            if (player.InventoryCount > 0 && selectedIndex < player.InventoryCount)
-            {
-                // Remove selected item
-                player.RemoveItemAt(selectedIndex);
+            // Store item name before removing
+            Sprite usedSprite = player.GetCurrentItem(selectedIndex);
+            // Remove selected item
+            player.RemoveItemAt(selectedIndex);
 
-                // Adjust selected index if now out of range
-                if (selectedIndex >= player.InventoryCount)
-                    selectedIndex = Mathf.Max(player.InventoryCount - 1, 0);
+            // Adjust selected index if now out of range
+            if (selectedIndex >= player.InventoryCount)
+                selectedIndex = Mathf.Max(player.InventoryCount - 1, 0);
 
-                // Update UI after selection adjustment
-                UpdateInventoryUI();
-                UpdateHandTexture();
-                UpdateHotbarHighlight();
+            // Update UI
+            UpdateInventoryUI();
+            UpdateHandTexture();
+            UpdateHotbarHighlight();
 
-                // Play particle effect
-                Cauldron cauldron = currentTarget.GetComponent<Cauldron>();
-                if (cauldron != null)
-                    cauldron.Activate();
-            }
-            else
-            {
-                Debug.Log("No items to use!");
-            }
+            // ✅ Call function in another script
+            if (progressBar != null && usedSprite != null)
+                progressBar.FillForItem(usedSprite.name);
+
+            // Play particle effect
+            Cauldron cauldron = currentTarget.GetComponent<Cauldron>();
+            if (cauldron != null)
+                cauldron.Activate();
         }
-        else // Pickup
+        else
         {
-            if (player.TryPickupItem(currentTarget))
-            {
-                // Select newly picked item
-                selectedIndex = player.InventoryCount - 1;
-
-                // Update UI
-                UpdateInventoryUI();
-                UpdateHandTexture();
-                UpdateHotbarHighlight();
-            }
-            else
-            {
-                Debug.Log("Inventory full!");
-            }
+            Debug.Log("No items to use!");
         }
     }
+    else // Pickup
+    {
+        if (player.TryPickupItem(currentTarget))
+        {
+            selectedIndex = player.InventoryCount - 1;
+
+            UpdateInventoryUI();
+            UpdateHandTexture();
+            UpdateHotbarHighlight();
+
+            // ✅ Optionally call on pickup
+            string pickedItem = currentTarget.name;
+            if (progressBar != null)
+                progressBar.FillForItem(pickedItem);
+        }
+        else
+        {
+            Debug.Log("Inventory full!");
+        }
+    }
+}
+
 
 
     private void UpdateInventoryUI()
