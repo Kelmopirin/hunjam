@@ -12316,7 +12316,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d196735e940184c41991f9276cc28bd1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerController
-  progressBar: {fileID: 0}
   fadeImage: {fileID: 213816510}
   fadeDuration: 5
   speed: 5
@@ -12329,6 +12328,7 @@ MonoBehaviour:
   - {fileID: 1417222176}
   - {fileID: 627620704}
   interactIcon: {fileID: 259688788}
+  slotHighlights: []
   handImage: {fileID: 1843859498}
   emptyHandTexture: {fileID: 2800000, guid: 4a1d182ed6305584fb15338a49c17511, type: 3}
   handPairs:
@@ -12354,6 +12354,7 @@ MonoBehaviour:
     handTexture: {fileID: 2800000, guid: 382aba58c27e87148b7c95452a762343, type: 3}
   collapseAudio: {fileID: 0}
   playerCamera: {fileID: 1476135393}
+  progressBar: {fileID: 1324708569}
 --- !u!136 &472432619
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -33675,6 +33676,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1324708567}
   - component: {fileID: 1324708568}
+  - component: {fileID: 1324708569}
   m_Layer: 0
   m_Name: Slider
   m_TagString: Untagged
@@ -33754,6 +33756,19 @@ MonoBehaviour:
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &1324708569
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1324708566}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 487243ddcfe5b7e45989a0f6a01b07d2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ItemProgressBar
+  slider: {fileID: 1324708568}
 --- !u!1001 &1327501665
 PrefabInstance:
   m_ObjectHideFlags: 0
