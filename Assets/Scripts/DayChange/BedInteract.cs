@@ -22,6 +22,7 @@ public class BedInteract: MonoBehaviour
 
     void Update()
     {
+
         if (player == null) return;
 
         float distance = Vector3.Distance(player.position, transform.position);
