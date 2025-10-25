@@ -10,12 +10,7 @@ public class BoardManagerScript : MonoBehaviour
 
     private void Awake()
     {
-        // Setup singleton
-        if (Instance != null && Instance != this)
-        {
-            Destroy(gameObject); // ensure only one instance
-            return;
-        }
+        
         Instance = this;
     }
 
