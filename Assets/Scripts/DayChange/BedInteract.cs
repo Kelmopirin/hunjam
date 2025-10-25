@@ -5,7 +5,7 @@ using System;
 
 public class BedInteract: MonoBehaviour
 {
-    public float interactionRange = 4f;
+    public float interactionRange = 6f;
     public Transform player;
     public GameObject sleepPrompt;
 
