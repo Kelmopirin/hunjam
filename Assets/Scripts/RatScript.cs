@@ -1,61 +1,49 @@
 using UnityEngine;
-using UnityEngine.AI;
 
-public class PatkanyAI : MonoBehaviour
+public class SimpleWallAvoidRat : MonoBehaviour
 {
-    [Header("Beállítások")]
-    public float minWaitTime = 1f;
-    public float maxWaitTime = 3f;
-    public float wanderRadius = 10f;
+    public float speed = 3f;
+    public float rotationSpeed = 2f;
     
-    private NavMeshAgent agent;
-    private float timer;
-    private float currentWaitTime;
+    private Vector3 currentDirection;
+    private float changeTimer = 2f;
 
     void Start()
     {
-        agent = GetComponent<NavMeshAgent>();
-        SetNewDestination();
-        SetRandomWaitTime();
+        SetRandomDirection();
     }
 
     void Update()
     {
-        if (agent == null) return;
-
-        timer += Time.deltaTime;
-
-        if (timer >= currentWaitTime || 
-            (agent.hasPath && agent.remainingDistance <= agent.stoppingDistance))
-        {
-            SetNewDestination();
-            SetRandomWaitTime();
-            timer = 0f;
-        }
-    }
-
-    void SetNewDestination()
-    {
-        if (agent == null) return;
-
-        Vector3 randomDirection = Random.insideUnitSphere * wanderRadius;
-        randomDirection += transform.position;
+        changeTimer -= Time.deltaTime;
         
-        NavMeshHit hit;
-        if (NavMesh.SamplePosition(randomDirection, out hit, wanderRadius, NavMesh.AllAreas))
+        if (changeTimer <= 0f)
         {
-            agent.SetDestination(hit.position);
+            SetRandomDirection();
+            changeTimer = Random.Range(1f, 3f);
+        }
+        
+        // Mozgás
+        transform.position += currentDirection * speed * Time.deltaTime;
+        
+        // Forgás
+        if (currentDirection != Vector3.zero)
+        {
+            Quaternion targetRotation = Quaternion.LookRotation(currentDirection);
+            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
         }
     }
 
-    void SetRandomWaitTime()
+    void SetRandomDirection()
     {
-        currentWaitTime = Random.Range(minWaitTime, maxWaitTime);
+        currentDirection = new Vector3(Random.Range(-1f, 1f), 0f, Random.Range(-1f, 1f)).normalized;
     }
 
-    void OnDrawGizmosSelected()
+    void OnCollisionEnter(Collision collision)
     {
-        Gizmos.color = Color.red;
-        Gizmos.DrawWireSphere(transform.position, wanderRadius);
+        // Ütközéskor visszapattan és új irányt választ
+        Vector3 reflection = Vector3.Reflect(currentDirection, collision.contacts[0].normal);
+        currentDirection = reflection.normalized;
+        changeTimer = Random.Range(0.5f, 1.5f);
     }
 }
