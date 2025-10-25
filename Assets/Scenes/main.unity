@@ -4754,6 +4754,7 @@ RectTransform:
   - {fileID: 1843859497}
   - {fileID: 788799892}
   - {fileID: 259688789}
+  - {fileID: 229546576}
   - {fileID: 85126424}
   - {fileID: 50362350}
   - {fileID: 1510824603}
@@ -6842,6 +6843,78 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 4907220437813338, guid: a8479e7e6a144f84a9db363badef3ae1, type: 3}
   m_PrefabInstance: {fileID: 229533043}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &229546575
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 229546576}
+  - component: {fileID: 229546578}
+  - component: {fileID: 229546577}
+  m_Layer: 5
+  m_Name: Use
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &229546576
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 229546575}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 0.32618088, y: 0.32618088, z: 0.32618088}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 155990495}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: -161.1, y: 152.6}
+  m_SizeDelta: {x: 100, y: 100}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &229546577
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 229546575}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1344c3c82d62a2a41a3576d8abb8e3ea, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.RawImage
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Texture: {fileID: 2800000, guid: 9da757f1e056b7b449d43ddd5e8b29de, type: 3}
+  m_UVRect:
+    serializedVersion: 2
+    x: 0
+    y: 0
+    width: 1
+    height: 1
+--- !u!222 &229546578
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 229546575}
+  m_CullTransparentMesh: 1
 --- !u!1001 &231195549
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -24231,7 +24304,7 @@ MonoBehaviour:
   - {fileID: 2910102300378922748, guid: 372d04339301e6b469db9f7bde80de24, type: 3}
   - {fileID: 3817671880582911683, guid: 66845eac530d844418ff7f2fe96e15a7, type: 3}
   - {fileID: 7508664433515660591, guid: eb9f5e4adcd2d384bb69f62fbc714cf5, type: 3}
-  - {fileID: 4236485280814453633, guid: 805f8959e26afd34eb84a592566fa811, type: 3}
+  - {fileID: 3021016534670666181, guid: 94366004eb6d7584dbf4b63d40952666, type: 3}
   - {fileID: 736895841103052052, guid: 2f3a1e115d5c1d146b6e2d805e55b060, type: 3}
   - {fileID: 4482228299949539168, guid: 32a44096b8603704f9fdfa167f056741, type: 3}
   - {fileID: 4236485280814453633, guid: ce1767e8bffe0204187b00663a50c847, type: 3}
@@ -57310,6 +57383,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: progbar
       objectReference: {fileID: 0}
+    - target: {fileID: 7709521699740899738, guid: 09330033109e7824fa71e28337433f02, type: 3}
+      propertyPath: fillSpeed
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 8110096021567342006, guid: 09330033109e7824fa71e28337433f02, type: 3}
       propertyPath: m_LocalScale.x
       value: 1.0876267
@@ -57375,6 +57452,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Player
       objectReference: {fileID: 0}
+    - target: {fileID: 6058110897555477217, guid: d99832fa309a99742aa3874aafa96af3, type: 3}
+      propertyPath: useIcon
+      value: 
+      objectReference: {fileID: 229546575}
     - target: {fileID: 6058110897555477217, guid: d99832fa309a99742aa3874aafa96af3, type: 3}
       propertyPath: fadeImage
       value: 

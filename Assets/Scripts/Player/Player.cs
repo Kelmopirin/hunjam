@@ -126,6 +126,12 @@ public class Player
         }
     }
 
+    public void RestoreEnergy(float amount)
+    {
+        currentEnergy = Mathf.Clamp(currentEnergy + amount, 0f, maxEnergy);
+    }
+
+
     private void Collapse() => isCollapsed = true;
 
     // Interactable check
