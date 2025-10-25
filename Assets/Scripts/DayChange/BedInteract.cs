@@ -1,12 +1,15 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.InputSystem;
+using System;
 
 public class BedInteract: MonoBehaviour
 {
-    public float interactionRange = 2.5f;
+    public float interactionRange = 4f;
     public Transform player;
     public GameObject sleepPrompt;
+
+    public Boolean canNextLevel = false;
 
     private PlayerInput playerInput;
     private bool isInRange = false;
@@ -29,10 +32,16 @@ public class BedInteract: MonoBehaviour
 
         if (isInRange && playerInput != null)
         {
+            
             var interactAction = playerInput.actions["Interact"];
             if (interactAction != null && interactAction.triggered)
             {
-                GoToNextScene();
+                if (!canNextLevel)
+            {
+                FindObjectOfType<MessageAlertSystem>().ShowMessage("Még nem aludhatsz!", Color.red);
+                return;
+            }
+            GoToNextScene();
             }
         }
     }
