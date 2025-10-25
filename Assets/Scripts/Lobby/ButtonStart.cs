@@ -6,6 +6,6 @@ public class ButtonStart : MonoBehaviour
     // This method can be called from a Button's OnClick event
     public void LoadMainScene()
     {
-        SceneManager.LoadScene("Main");
+        SceneManager.LoadScene("Loading");
     }
 }
