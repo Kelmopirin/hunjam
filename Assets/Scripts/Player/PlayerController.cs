@@ -146,7 +146,8 @@ public class PlayerController : MonoBehaviour
     }
 
 private void OnInteract(InputAction.CallbackContext context)
-{
+    {
+    
     if (currentTarget == null) return;
 
     if (currentTarget.CompareTag("Cauldron"))
@@ -192,9 +193,7 @@ private void OnInteract(InputAction.CallbackContext context)
             UpdateHotbarHighlight();
 
             // ✅ Optionally call on pickup
-            string pickedItem = currentTarget.name;
-            if (progressBar != null)
-                progressBar.FillForItem(pickedItem);
+            
         }
         else
         {
