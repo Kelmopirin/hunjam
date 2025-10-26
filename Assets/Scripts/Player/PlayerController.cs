@@ -162,6 +162,15 @@ public class PlayerController : MonoBehaviour
             return;
         }
 
+        if (currentTarget.CompareTag("Repont"))
+        {
+            RepontMoney repontScript = currentTarget.GetComponent<RepontMoney>();
+        }
+
+      
+
+
+
 
         if (currentTarget.CompareTag("Cauldron"))
         {
@@ -182,6 +191,12 @@ public class PlayerController : MonoBehaviour
                 if (cauldron != null)
                     cauldron.Activate();
             }
+        }
+        else if (currentTarget.CompareTag("Dzsenifer"))
+        {
+            Debug.Log("Clicked on jennifer");
+            CigiShop cigiBolt = currentTarget.GetComponent<CigiShop>();
+            cigiBolt.checkMoney();
         }
         else
         {

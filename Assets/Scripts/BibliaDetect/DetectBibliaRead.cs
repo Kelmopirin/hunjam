@@ -39,13 +39,11 @@ public class DetectBibliaRead : MonoBehaviour
 
         // Check distance first
         float distance = Vector3.Distance(playerObj.transform.position, targetObject.position);
-        UnityEngine.Debug.Log(distance);
         if (distance <= detectionRange)
         {
             var player = playerController.player;
 
             Sprite currentItem = player.GetCurrentItem(playerController.selectedIndex);
-            UnityEngine.Debug.Log(currentItem);
 
             if (currentItem != null && currentItem.name == "biblia")
             {
@@ -65,7 +63,19 @@ public class DetectBibliaRead : MonoBehaviour
             }
             else
         {
-            useIcon.SetActive(false);
+                useIcon.SetActive(false);
+            if (playerInput.actions["Use"].triggered)
+                {
+                    UnityEngine.Debug.Log("success");
+                    tick.SetActive(true);
+                    playerController.player.DrainEnergy(150f);
+                    player.RemoveItemAt(playerController.selectedIndex);
+                    playerController.UpdateInventoryUI();
+                    itemProgressScript.FillForItem("hell");
+
+                }
+            FindObjectOfType<MessageAlertSystem>().ShowMessage("Hülye maradsz!", Color.red);
+
             
         }
 
