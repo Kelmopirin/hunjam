@@ -22,7 +22,7 @@ public class RepontMoney : MonoBehaviour
 
     public int money = 0;
 
-
+    private AudioSource cashSound;
 
     void Start()
     {
@@ -33,6 +33,7 @@ public class RepontMoney : MonoBehaviour
         if (playerController == null)
             playerController = FindObjectOfType<PlayerController>();
     
+        cashSound = GetComponent<AudioSource>();
 
     }
 
@@ -61,6 +62,7 @@ public class RepontMoney : MonoBehaviour
                     money += 50;
                     player.RemoveItemAt(playerController.selectedIndex);
                     playerController.UpdateInventoryUI();
+                    cashSound.Play();
 
                 }
             }
@@ -74,6 +76,7 @@ public class RepontMoney : MonoBehaviour
                     money += 25;
                     player.RemoveItemAt(playerController.selectedIndex);
                     playerController.UpdateInventoryUI();
+                    cashSound.Play();
                 }
             }
             
