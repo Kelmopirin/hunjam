@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.SceneManagement;
 
 public class ItemProgressBar : MonoBehaviour
 {
@@ -89,13 +90,41 @@ public class ItemProgressBar : MonoBehaviour
         fillRoutine = null;
 
         if (currentFill >= progressBar.maxValue)
+        {
+            int sceneIndex = SceneManager.GetActiveScene().buildIndex;
+            if (sceneIndex == 1)
             {
-                BedInteract bed = FindObjectOfType<BedInteract>(); 
+                BedInteract bed = FindObjectOfType<BedInteract>();
                 if (bed != null)
                 {
                     bed.canNextLevel = true;
                     Debug.Log("Bar is full! You can now go to the next level.");
+                    FindObjectOfType<MessageAlertSystem>().ShowMessage("Kész a kaja! Már aludhatsz!", Color.green);
+
                 }
             }
+            
+            if (sceneIndex == 2)
+            {
+                BedInteract bed = FindObjectOfType<BedInteract>();
+                if (bed != null)
+                {
+                    GameObject tickGajdos = GameObject.Find("tickGajdos");
+                    if (tickGajdos != null)
+                    {
+                        if (tickGajdos.activeSelf)
+                        {
+                            bed.canNextLevel = true;
+                            FindObjectOfType<MessageAlertSystem>().ShowMessage("Nap túlélve! Mehetsz aludni!", Color.green);
+                        }  
+                    }
+                    else
+                    {
+                        Debug.LogWarning("tickGajdos not found in the scene!");
+                    }
+                    Debug.Log("Bar is full! You can now go to the next level.");
+                }
+            } 
+        }
     }
 }
