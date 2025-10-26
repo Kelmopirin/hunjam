@@ -129,7 +129,7 @@ MonoBehaviour:
   slowMultiplier: 0.1
   slowDuration: 3
   energyLoss: 20
-  slipSound: {fileID: 0}
+  slipSound: {fileID: 761843086096438490}
 --- !u!82 &761843086096438490
 AudioSource:
   m_ObjectHideFlags: 0

@@ -74,7 +74,6 @@ public class DetectBibliaRead : MonoBehaviour
                     itemProgressScript.FillForItem("hell");
 
                 }
-            FindObjectOfType<MessageAlertSystem>().ShowMessage("Hülye maradsz!", Color.red);
 
             
         }
