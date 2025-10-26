@@ -92,7 +92,7 @@ public class ItemProgressBar : MonoBehaviour
         if (currentFill >= progressBar.maxValue)
         {
             int sceneIndex = SceneManager.GetActiveScene().buildIndex;
-            if (sceneIndex == 1)
+            if (sceneIndex != 2)
             {
                 BedInteract bed = FindObjectOfType<BedInteract>();
                 if (bed != null)
@@ -103,8 +103,7 @@ public class ItemProgressBar : MonoBehaviour
 
                 }
             }
-            
-            if (sceneIndex == 2)
+            else
             {
                 BedInteract bed = FindObjectOfType<BedInteract>();
                 if (bed != null)

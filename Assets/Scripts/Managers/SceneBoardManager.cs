@@ -19,19 +19,19 @@ public class SceneBoardManager : MonoBehaviour
         {
             // Logic for scene 2
             Debug.Log("Scene 2 logic here");
-            BoardManagerScript.Instance.setText("Holnap AdatB ZH. Addig nem fogsz tudni aludni amíg meg nem emészted Gajdos szentírását!");
+            BoardManagerScript.Instance.setText("Holnap AdatB ZH. Addig nem fogsz aludni amíg meg nem találod és tanulmányozod Gajdos szentírását!");
         }
         else if (sceneIndex == 3)
         {
             // Logic for scene 3
             Debug.Log("Scene 3 logic here");
-            BoardManagerScript.Instance.setText("Részeg vagy xd");
+            BoardManagerScript.Instance.setText("Vigyázz! A részeg csávó a folyósón nem könnyíti meg ma a dolgod!");
         }
         else if (sceneIndex == 4)
         {
             // Logic for scene 4
             Debug.Log("Scene 4 logic here");
-            BoardManagerScript.Instance.setText("Day 4");
+            BoardManagerScript.Instance.setText("Te sem vagy jobb a részeg csávónál...");
         }
         else if (sceneIndex == 5)
         {

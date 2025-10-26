@@ -30,6 +30,8 @@ public class PlayerController : MonoBehaviour
     public float gravity = -9.81f;
     public float mouseSensitivity = 100f;
     public float interactDistance = 3f;
+    private float originalSpeed;
+    private bool isSpeedBoosted = false;
 
     [Header("UI")]
     public Slider energySlider;
@@ -57,6 +59,7 @@ public class PlayerController : MonoBehaviour
     public ItemProgressBar progressBar;
 
     private GameObject currentTarget;
+    private Coroutine speedBoostCoroutine;
 
     private void Awake()
     {
@@ -74,6 +77,18 @@ public class PlayerController : MonoBehaviour
             energySlider.maxValue = player.MaxEnergy;
             energySlider.value = player.CurrentEnergy;
         }
+
+        // In PlayerController Awake or Start
+        player.onCollapse = () =>
+        {
+            if (!isFading)
+            {
+                if (collapseAudio != null && !collapseAudio.isPlaying)
+                    collapseAudio.Play();
+                StartCoroutine(FadeAndReload());
+            }
+        };
+
     }
 
     private void OnEnable()
@@ -327,4 +342,26 @@ public class PlayerController : MonoBehaviour
         fadeImage.color = c;
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
+
+    public void StartSpeedBoost(float slowMultiplier, float duration)
+    {
+        if (!isSpeedBoosted)
+            originalSpeed = player.speed;
+
+        player.speed = originalSpeed * slowMultiplier;
+        isSpeedBoosted = true;
+
+        if (speedBoostCoroutine != null)
+            StopCoroutine(speedBoostCoroutine);
+
+        speedBoostCoroutine = StartCoroutine(ResetSpeedAfterDelay(duration));
+    }
+
+    private IEnumerator ResetSpeedAfterDelay(float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        player.speed = originalSpeed; // Restore speed
+        isSpeedBoosted = false;
+    }
+
 }
