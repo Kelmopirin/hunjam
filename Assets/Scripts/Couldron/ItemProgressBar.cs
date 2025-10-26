@@ -8,6 +8,8 @@ public class ItemProgressBar : MonoBehaviour
 {
     [Header("UI")]
     public Slider progressBar;
+    public PlayerController playerController; // Reference to PlayerController (for currentIndex)
+
 
     [Header("Settings")]
     [Tooltip("How fast the bar fills (acts as a multiplier). Higher = faster.")]
@@ -26,6 +28,7 @@ public class ItemProgressBar : MonoBehaviour
         { "patkany2", 10f },
         { "smack", 15f },
         { "wckefe", 4f },
+        
     };
 
     private float currentFill = 0f;
@@ -33,6 +36,8 @@ public class ItemProgressBar : MonoBehaviour
 
     void Start()
     {
+        playerController = FindObjectOfType<PlayerController>();
+
         if (progressBar != null)
         {
             progressBar.minValue = 0f;
@@ -50,6 +55,13 @@ public class ItemProgressBar : MonoBehaviour
             return;
 
         itemName = itemName.ToLower();
+        if (itemName == "biblia")
+        {
+            playerController.player.DrainEnergy(500f);
+            FindObjectOfType<MessageAlertSystem>().ShowMessage("Hülye maradsz!", Color.red);
+            return;
+
+        }
 
         // Check if the item exists in the dictionary
         if (itemFillValues.TryGetValue(itemName, out float baseValue))

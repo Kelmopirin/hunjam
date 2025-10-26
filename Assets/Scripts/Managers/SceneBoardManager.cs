@@ -19,7 +19,7 @@ public class SceneBoardManager : MonoBehaviour
         {
             // Logic for scene 2
             Debug.Log("Scene 2 logic here");
-            BoardManagerScript.Instance.setText("Holnap AdatB ZH. Addig nem fogsz aludni amíg meg nem találod és tanulmányozod Gajdos szentírását!");
+            BoardManagerScript.Instance.setText("Holnap AdatB ZH. Alváshoz olvasd el Gajdos könyvét és csinálj kaját! Tipp: Keresd meg a oltárat és a könyvet, olvasd el Gajdos mesterművét ott. Az energiaital feltölti az energiádat.");
         }
         else if (sceneIndex == 3)
         {
