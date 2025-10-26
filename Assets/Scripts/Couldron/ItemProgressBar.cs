@@ -54,6 +54,8 @@ public class ItemProgressBar : MonoBehaviour
         if (string.IsNullOrEmpty(itemName) || progressBar == null)
             return;
 
+        Debug.Log(itemName);
+
         itemName = itemName.ToLower();
         if (itemName == "biblia")
         {
@@ -104,7 +106,8 @@ public class ItemProgressBar : MonoBehaviour
         if (currentFill >= progressBar.maxValue)
         {
             int sceneIndex = SceneManager.GetActiveScene().buildIndex;
-            if (sceneIndex != 2)
+            Debug.Log(sceneIndex);
+            if (sceneIndex != 2 && sceneIndex != 5)
             {
                 BedInteract bed = FindObjectOfType<BedInteract>();
                 if (bed != null)
@@ -113,6 +116,27 @@ public class ItemProgressBar : MonoBehaviour
                     Debug.Log("Bar is full! You can now go to the next level.");
                     FindObjectOfType<MessageAlertSystem>().ShowMessage("Kész a kaja! Már aludhatsz!", Color.green);
 
+                }
+            }
+            else if (sceneIndex == 5)
+            {
+                BedInteract bed = FindObjectOfType<BedInteract>();
+                if (bed != null)
+                {
+                    GameObject tickGajdos = GameObject.Find("tickPenz");
+                    if (tickGajdos != null)
+                    {
+                        if (tickGajdos.activeSelf)
+                        {
+                            bed.canNextLevel = true;
+                            FindObjectOfType<MessageAlertSystem>().ShowMessage("Utolsó nap túlélve! Szabad vagy!", Color.green);
+                        }
+                    }
+                    else
+                    {
+                        Debug.LogWarning("tickGajdos not found in the scene!");
+                    }
+                    Debug.Log("Bar is full! You can now go to the next level.");
                 }
             }
             else
@@ -127,7 +151,7 @@ public class ItemProgressBar : MonoBehaviour
                         {
                             bed.canNextLevel = true;
                             FindObjectOfType<MessageAlertSystem>().ShowMessage("Nap túlélve! Mehetsz aludni!", Color.green);
-                        }  
+                        }
                     }
                     else
                     {

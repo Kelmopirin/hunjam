@@ -180,7 +180,8 @@ public class Player
         {
             if (hit.collider.CompareTag("Interactable") ||
                 hit.collider.CompareTag("Cauldron") ||
-                hit.collider.CompareTag("Bed"))
+                hit.collider.CompareTag("Bed") ||
+                hit.collider.CompareTag("Dzsenifer"))
             {
                 return hit.collider.gameObject;
             }
