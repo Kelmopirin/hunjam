@@ -54,7 +54,7 @@ public class DetectBibliaRead : MonoBehaviour
                 {
                     UnityEngine.Debug.Log("success");
                     tick.SetActive(true);
-                    playerController.player.DrainEnergy(150f);
+                    playerController.player.DrainEnergy(100f);
                     player.RemoveItemAt(playerController.selectedIndex);
                     playerController.UpdateInventoryUI();
                     itemProgressScript.FillForItem("hell");

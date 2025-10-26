@@ -127,8 +127,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SpeedBoostPickup
   slowMultiplier: 0.1
-  slowDuration: 5
-  pickupSound: {fileID: 761843086096438490}
+  slowDuration: 3
+  energyLoss: 20
+  slipSound: {fileID: 0}
 --- !u!82 &761843086096438490
 AudioSource:
   m_ObjectHideFlags: 0

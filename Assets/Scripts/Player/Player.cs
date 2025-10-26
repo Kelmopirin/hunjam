@@ -6,6 +6,17 @@ public class Player
     public float speed;
     private float gravity;
     private float mouseSensitivity;
+    public float MouseSensitivity
+    {
+        get => mouseSensitivity;
+        set
+        {
+            mouseSensitivity = value;
+            PlayerPrefs.SetFloat("MouseSensitivity", mouseSensitivity);
+            PlayerPrefs.Save();
+        }
+    }
+
 
     private Vector2 moveInput;
     private Vector2 lookInput;
@@ -36,11 +47,14 @@ public class Player
     {
         this.speed = speed;
         this.gravity = gravity;
-        this.mouseSensitivity = mouseSensitivity;
-        velocity = Vector3.zero;
 
+        // Load stored value if exists, else use default
+        this.MouseSensitivity = PlayerPrefs.GetFloat("MouseSensitivity", mouseSensitivity);
+
+        velocity = Vector3.zero;
         currentEnergy = maxEnergy;
     }
+
 
     // Inventory Methods
     public bool TryPickupItem(GameObject item)
@@ -76,6 +90,11 @@ public class Player
         return false;
     }
 
+    public void SetMouseSensitivity(float value)
+    {
+        mouseSensitivity = value;
+    }
+
 
     // Inputs
     public void SetMoveInput(Vector2 input) => moveInput = input;
@@ -106,8 +125,8 @@ public class Player
     {
         if (isCollapsed) return;
 
-        float mouseX = lookInput.x * mouseSensitivity * Time.deltaTime;
-        float mouseY = lookInput.y * mouseSensitivity * Time.deltaTime;
+        float mouseX = lookInput.x * MouseSensitivity * Time.deltaTime;
+        float mouseY = lookInput.y * MouseSensitivity * Time.deltaTime;
 
         xRotation -= mouseY;
         xRotation = Mathf.Clamp(xRotation, -90f, 90f);

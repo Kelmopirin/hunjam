@@ -61,6 +61,11 @@ public class PlayerController : MonoBehaviour
     private GameObject currentTarget;
     private Coroutine speedBoostCoroutine;
 
+    private bool isPaused = false;
+    public GameObject pauseMenu;
+    public Slider sensitivitySlider;
+
+
     private void Awake()
     {
         characterController = GetComponent<CharacterController>();
@@ -89,6 +94,16 @@ public class PlayerController : MonoBehaviour
             }
         };
 
+        if (pauseMenu != null)
+        pauseMenu.SetActive(false);
+
+        Time.timeScale = 1f;
+
+        float savedSensitivity = PlayerPrefs.GetFloat("Sensitivity", 100f);
+        player = new Player(speed, gravity, savedSensitivity);
+
+        sensitivitySlider.value = savedSensitivity;
+
     }
 
     private void OnEnable()
@@ -101,6 +116,8 @@ public class PlayerController : MonoBehaviour
 
         playerInput.actions["Interact"].performed += OnInteract;
         playerInput.actions["Use"].performed += OnUse;
+    
+        playerInput.actions["Pause"].performed += OnPause;
     }
 
     private void OnDisable()
@@ -113,6 +130,8 @@ public class PlayerController : MonoBehaviour
 
         playerInput.actions["Interact"].performed -= OnInteract;
         playerInput.actions["Use"].performed -= OnUse;
+
+        playerInput.actions["Pause"].performed -= OnPause;
     }
 
     private void Update()
@@ -379,4 +398,57 @@ public class PlayerController : MonoBehaviour
         isSpeedBoosted = false;
     }
 
+    private void OnPause(InputAction.CallbackContext context)
+    {
+        if (isPaused)
+            ResumeGame();
+        else
+            PauseGame();
+    }
+
+    private void PauseGame()
+    {
+        isPaused = true;
+        pauseMenu.SetActive(true);
+
+        // Unlock cursor
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
+
+        // Disable camera look input
+        player.SetLookInput(Vector2.zero);
+
+        // Freeze movement
+        Time.timeScale = 0f;
+
+        // Update slider display
+        sensitivitySlider.value = player.MouseSensitivity;
+    }
+
+    private void ResumeGame()
+    {
+        isPaused = false;
+        pauseMenu.SetActive(false);
+
+        // Lock cursor
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
+
+        Time.timeScale = 1f;
+    }
+
+    public void OnSensitivityChanged(float value)
+    {
+        player.SetMouseSensitivity(value);
+        PlayerPrefs.SetFloat("Sensitivity", value);
+    }
+
+    public void ExitGame()
+    {
+        #if UNITY_EDITOR
+        UnityEditor.EditorApplication.isPlaying = false;
+        #else
+        Application.Quit();
+        #endif
+    }
 }
