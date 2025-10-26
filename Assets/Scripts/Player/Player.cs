@@ -116,7 +116,7 @@ public class Player
     }
 
     // Energy Methods
-    private void DrainEnergy(float amount)
+    public void DrainEnergy(float amount)
     {
         currentEnergy -= amount;
         if (currentEnergy <= 0f)

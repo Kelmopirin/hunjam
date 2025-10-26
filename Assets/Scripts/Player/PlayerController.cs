@@ -15,7 +15,7 @@ public struct HandHoldPair
 [RequireComponent(typeof(CharacterController))]
 public class PlayerController : MonoBehaviour
 {
-    private Player player;
+    public Player player;
     private CharacterController characterController;
     private PlayerInput playerInput;
     private Rigidbody rb;
@@ -52,7 +52,7 @@ public class PlayerController : MonoBehaviour
     public Transform playerCamera;
 
     [Header("Hotbar / Selection")]
-    private int selectedIndex = 0;
+    public int selectedIndex = 0;
     public ItemProgressBar progressBar;
 
     private GameObject currentTarget;
@@ -204,7 +204,7 @@ public class PlayerController : MonoBehaviour
         UpdateUseIcon(); // ✅
     }
 
-    private void UpdateInventoryUI()
+    public void UpdateInventoryUI()
     {
         var items = player.Items;
 
