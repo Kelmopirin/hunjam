@@ -4,6 +4,11 @@ public class Cauldron : MonoBehaviour
 {
     public ParticleSystem particles;  // Assign in Inspector
     public float particleDuration = 2f; // seconds
+    private AudioSource audioSource;
+
+    private void Start() {
+        audioSource = GetComponent<AudioSource>();
+    }
 
     public void Activate()
     {
@@ -21,6 +26,8 @@ public class Cauldron : MonoBehaviour
 
         // Stop emitting new particles after duration, let existing ones fade
         Invoke(nameof(StopEmitting), particleDuration);
+
+        audioSource.Play();
     }
 
 

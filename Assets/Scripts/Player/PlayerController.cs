@@ -47,6 +47,7 @@ public class PlayerController : MonoBehaviour
 
     [Header("Audio")]
     public AudioSource collapseAudio;
+    public AudioSource regainAudio;
 
     [Header("References")]
     public Transform playerCamera;
@@ -61,9 +62,6 @@ public class PlayerController : MonoBehaviour
     {
         characterController = GetComponent<CharacterController>();
         playerInput = GetComponent<PlayerInput>();
-
-        if (collapseAudio == null)
-            collapseAudio = GetComponent<AudioSource>();
 
         player = new Player(speed, gravity, mouseSensitivity);
 
@@ -194,6 +192,7 @@ public class PlayerController : MonoBehaviour
         {
             player.RestoreEnergy(150f);
             player.RemoveItemAt(selectedIndex);
+            regainAudio.Play();
 
             if (selectedIndex >= player.InventoryCount)
                 selectedIndex = Mathf.Max(player.InventoryCount - 1, 0);
