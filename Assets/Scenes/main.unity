@@ -57453,6 +57453,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1496049245036531037, guid: f595be712302283449993ae7757f3fbe, type: 3}
+      propertyPath: fillSpeed
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 3364281989816338703, guid: f595be712302283449993ae7757f3fbe, type: 3}
       propertyPath: m_Name
       value: Cauldron

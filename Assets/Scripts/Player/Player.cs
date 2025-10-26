@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 public class Player
 {
-    private float speed;
+    public float speed;
     private float gravity;
     private float mouseSensitivity;
 
@@ -29,6 +29,7 @@ public class Player
     // Add these properties if not already
     public float CurrentEnergy => currentEnergy;
     public float MaxEnergy => maxEnergy;
+    public System.Action onCollapse;
 
 
     public Player(float speed, float gravity, float mouseSensitivity = 100f)
@@ -126,13 +127,29 @@ public class Player
         }
     }
 
+    public void ReduceEnergy(float amount)
+    {
+        currentEnergy = Mathf.Max(currentEnergy - amount, 0f);
+        if (currentEnergy <= 0f && !isCollapsed)
+        {
+            Collapse();
+        }
+    }
+
+
+
     public void RestoreEnergy(float amount)
     {
         currentEnergy = Mathf.Clamp(currentEnergy + amount, 0f, maxEnergy);
     }
 
 
-    private void Collapse() => isCollapsed = true;
+    private void Collapse()
+    {
+        isCollapsed = true;
+        velocity = Vector3.zero;
+        onCollapse?.Invoke();  // Notify PlayerController
+    }
 
 
     public GameObject CheckForInteractable(Transform cameraTransform, float distance)
