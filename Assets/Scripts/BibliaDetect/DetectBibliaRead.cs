@@ -20,7 +20,7 @@ public class DetectBibliaRead : MonoBehaviour
     public ItemProgressBar itemProgressScript;
 
     public GameObject tick;
-
+    
     void Start()
     {
         // Auto-assign references if missing
