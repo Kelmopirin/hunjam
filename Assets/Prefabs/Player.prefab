@@ -153,6 +153,7 @@ GameObject:
   - component: {fileID: 6058110897555477217}
   - component: {fileID: 2849407269811778261}
   - component: {fileID: 7495828733777948671}
+  - component: {fileID: 7729029174445252055}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -294,6 +295,10 @@ MonoBehaviour:
       m_Calls: []
     m_ActionId: dbb76564-3428-4f2f-9811-4da9651c25d3
     m_ActionName: 'Player/Interact[/Mouse/leftButton]'
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: c7333ba3-006a-4ecf-a148-96edaea1b164
+    m_ActionName: 'Player/Use[/Mouse/rightButton]'
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: Keyboard&Mouse
   m_DefaultActionMap: Player
@@ -323,6 +328,7 @@ MonoBehaviour:
   - {fileID: 0}
   - {fileID: 0}
   interactIcon: {fileID: 0}
+  useIcon: {fileID: 0}
   slotHighlights: []
   handImage: {fileID: 0}
   emptyHandTexture: {fileID: 2800000, guid: 4a1d182ed6305584fb15338a49c17511, type: 3}
@@ -347,7 +353,10 @@ MonoBehaviour:
     handTexture: {fileID: 2800000, guid: fb447c88d5283d94c8acd269cb8d335b, type: 3}
   - itemSprite: {fileID: 21300000, guid: 702bd3e2784301a4b89dbc9028b33e11, type: 3}
     handTexture: {fileID: 2800000, guid: 382aba58c27e87148b7c95452a762343, type: 3}
-  collapseAudio: {fileID: 0}
+  - itemSprite: {fileID: 21300000, guid: 9145a0308b896c2458498199346d232d, type: 3}
+    handTexture: {fileID: 2800000, guid: 24caa4efe03c6544387402caa56c6448, type: 3}
+  collapseAudio: {fileID: 7495828733777948671}
+  regainAudio: {fileID: 7729029174445252055}
   playerCamera: {fileID: 1911400021701825353}
   progressBar: {fileID: 0}
 --- !u!136 &2849407269811778261
@@ -385,6 +394,103 @@ AudioSource:
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 0}
   m_Resource: {fileID: 8300000, guid: 50beeb6e4ef88a3478311c9fc2930438, type: 3}
+  m_PlayOnAwake: 0
+  m_Volume: 1
+  m_Pitch: 1
+  Loop: 0
+  Mute: 0
+  Spatialize: 0
+  SpatializePostEffects: 0
+  Priority: 128
+  DopplerLevel: 1
+  MinDistance: 1
+  MaxDistance: 500
+  Pan2D: 0
+  rolloffMode: 0
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+--- !u!82 &7729029174445252055
+AudioSource:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3798766718964014132}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: 0}
+  m_audioClip: {fileID: 0}
+  m_Resource: {fileID: 8300000, guid: b785e05165d9a3e40a7d9fee14d013d4, type: 3}
   m_PlayOnAwake: 0
   m_Volume: 1
   m_Pitch: 1
